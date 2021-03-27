@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "479637579638",
+    "project_id": "eventtrackerfirebase2021",
+    "storage_bucket": "eventtrackerfirebase2021.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479637579638:android:884d374380f1caa4bafc57",
+        "android_client_info": {
+          "package_name": "com.example.eventtrackerfirebase2021"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479637579638-jbutkcbnbaqqdgv6btl4aejq89qlteav.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnlr9Dbbqj56VfjVSikAALB6APYKzdQ0o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479637579638-jbutkcbnbaqqdgv6btl4aejq89qlteav.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
