@@ -1,4 +1,5 @@
 package com.example.eventtrackerfirebase2021;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -66,6 +67,8 @@ public class EditEventActivity extends AppCompatActivity {
         else
         {
             // prevents the app from crashing if user doesn't use correct date format
+            // and it wasn't caught in previous check since that only checked length
+            // of the string
             try{
                 month = Integer.parseInt(newDate.substring(0, 2));
                 day =  Integer.parseInt(newDate.substring(3, 5));
@@ -79,6 +82,8 @@ public class EditEventActivity extends AppCompatActivity {
 
         if (!(month > 0 && month < 13 && day > 0 && day < 32 )) {
             toastMessage("Please enter a valid month/day");
+            // note this doesn't make sure they don't enter an invalid
+            // date such as Feb 31st...
             return;
         }
 
@@ -92,7 +97,7 @@ public class EditEventActivity extends AppCompatActivity {
 
         db.collection("events").document(keyToUpdate)
                 .update(eventToAdd);
-        }
+    }
 
 
 
@@ -107,45 +112,43 @@ public class EditEventActivity extends AppCompatActivity {
     }
 
     public void onRetrieve(View v){
-            // This ArrayList will hold the current contents of the database and will be sent to the
-            // DisplayEventsActivity after it is populated from firestore contents
+        // This ArrayList will hold the current contents of the database and will be sent to the
+        // DisplayEventsActivity after it is populated from firestore contents
 
-            ArrayList<Event> myEvents = new ArrayList<Event>();
+        ArrayList<Event> myEvents = new ArrayList<Event>();
 
-            // I did a query where I order the data pulled from firestore by date so the events are in chronological order
-            // https://firebase.google.com/docs/firestore/query-data/order-limit-data
+        // I did a query where I order the data pulled from firestore by date so the events
+        // are in chronological order.  However it orders them months 1,11,12, 2, 3, 4, etc :(
+        // https://firebase.google.com/docs/firestore/query-data/order-limit-data
 
-            db.collection("events").orderBy(MainActivity.DATE_KEY)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document: task.getResult()) {
-                                    Log.i(TAG, document.getId() + " =>" + document.getData());
-                                    Event e = new Event(document.getString(MainActivity.NAME_KEY),
-                                            document.getString(MainActivity.DATE_KEY),
-                                            document.getLong(MainActivity.MONTH_KEY).intValue(),
-                                            document.getLong(MainActivity.DAY_KEY).intValue(),
-                                            document.getLong(MainActivity.YEAR_KEY).intValue(),
-                                            document.getId());
-                                    myEvents.add(e);
-                                }
+        db.collection("events").orderBy(MainActivity.DATE_KEY)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document: task.getResult()) {
+                                Log.i(TAG, document.getId() + " =>" + document.getData());
+                                Event e = new Event(document.getString(MainActivity.NAME_KEY),
+                                        document.getString(MainActivity.DATE_KEY),
+                                        document.getLong(MainActivity.MONTH_KEY).intValue(),
+                                        document.getLong(MainActivity.DAY_KEY).intValue(),
+                                        document.getLong(MainActivity.YEAR_KEY).intValue(),
+                                        document.getId());
+                                myEvents.add(e);
                             }
-                            else {
-                                Log.i(TAG, "Error getting documents", task.getException());
-                            }
-
-                            // Start new activity and send it the ArrayList of Event objects
-                            Intent intent = new Intent(EditEventActivity.this, DisplayEventsActivity.class);
-                            intent.putExtra("events", myEvents);
-                            startActivity(intent);
                         }
-                    });
-        }
+                        else {
+                            Log.i(TAG, "Error getting documents", task.getException());
+                        }
 
-
-
+                        // Start new activity and send it the ArrayList of Event objects
+                        Intent intent = new Intent(EditEventActivity.this, DisplayEventsActivity.class);
+                        intent.putExtra("events", myEvents);
+                        startActivity(intent);
+                    }
+                });
+    }
 
     /*
        This method improves readability of the code for toast messages.  It is a simple helper method
