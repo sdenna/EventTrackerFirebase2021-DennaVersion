@@ -13,9 +13,9 @@ public class Event implements Parcelable
 {
     private String eventName;
     private String eventDate;
-    private int year;
     private int month;
     private int day;
+    private int year;
     private String key;
 
     // needed  for the Parcelable code to work
@@ -45,8 +45,8 @@ public class Event implements Parcelable
         eventName = parcel.readString();
         eventDate = parcel.readString();
         month = parcel.readInt();
-        year = parcel.readInt();
         day = parcel.readInt();
+        year = parcel.readInt();
         key = parcel.readString();
     }
 
@@ -55,17 +55,17 @@ public class Event implements Parcelable
      * We use this one when we do not know the unique Firebase key yet for the Event
      * @param eventName
      * @param eventDate
-     * @param year
      * @param month
      * @param day
+     * @param year
      */
 
-    public Event(String eventName, String eventDate, int year, int month, int day) {
+    public Event(String eventName, String eventDate, int month, int day, int year) {
         this.eventName = eventName;
         this.eventDate = eventDate;
-        this.year = year;
         this.month = month;
         this.day = day;
+        this.year = year;
         this.key = "no key yet";
     }
 
@@ -73,17 +73,17 @@ public class Event implements Parcelable
      * This constructor is used when the unique Firebase key is already known.
      * @param eventName
      * @param eventDate
-     * @param year
      * @param month
      * @param day
+     * @param year
      * @param key
      */
-    public Event(String eventName, String eventDate, int year, int month, int day, String key) {
+    public Event(String eventName, String eventDate, int month, int day, int year, String key) {
         this.eventName = eventName;
         this.eventDate = eventDate;
-        this.year = year;
         this.month = month;
         this.day = day;
+        this.year = year;
         this.key = key;
     }
 
@@ -99,10 +99,9 @@ public class Event implements Parcelable
         dest.writeString(eventName);
         dest.writeString(eventDate);
         dest.writeInt(month);
-        dest.writeInt(year);
         dest.writeInt(day);
+        dest.writeInt(year);
         dest.writeString(key);
-
     }
 
 
@@ -192,7 +191,7 @@ public class Event implements Parcelable
 
         // Extra space to keep it looking uniform in listview
         if (day < 10)
-            str += "  ";
+            str += " ";
 
         str += day;
         str += ", " + year + "   " + eventName;

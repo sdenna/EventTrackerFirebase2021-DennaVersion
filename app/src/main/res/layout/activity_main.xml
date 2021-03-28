@@ -45,6 +45,7 @@
         android:id="@+id/showAllButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show Events"/>
+        android:text="Show Events"
+        android:onClick="showData"/>
 
 </LinearLayout>
