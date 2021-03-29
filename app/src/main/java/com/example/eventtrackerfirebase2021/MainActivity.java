@@ -61,7 +61,13 @@ public class MainActivity extends AppCompatActivity {
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener(){
             @Override
                 public void onSelectedDayChange(CalendarView calendarView, int year, int month, int day) {
-                    dateSelected =  (month + 1) + "/" + day + "/" + year;
+                    if ((month + 1) < 10) {
+                        dateSelected = "0" + (month + 1) + "/" + day + "/" + year;
+                    }
+                    else {
+                        dateSelected = (month + 1) + "/" + day + "/" + year;
+                    }
+
                     dateYear = year;
                     dateMonth = month + 1;
                     dateDay = day;

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".EditEventActivity"
     android:orientation="vertical">
-    
+
 
     <EditText
         android:id="@+id/eventName"

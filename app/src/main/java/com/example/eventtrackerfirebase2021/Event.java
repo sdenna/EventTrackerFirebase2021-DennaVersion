@@ -194,7 +194,7 @@ public class Event implements Parcelable
             str += " ";
 
         str += day;
-        str += ", " + year + "   " + eventName;
+        str += ", " + year;
 
         return str;
     }

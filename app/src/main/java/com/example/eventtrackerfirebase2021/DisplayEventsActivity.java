@@ -122,7 +122,7 @@ public class DisplayEventsActivity extends AppCompatActivity {
             // displaying in the list
             eventImageView.setImageResource(getMonth(e));
             eventNameTV.setText(e.getEventName());
-            eventDateTV.setText(e.getEventDate());
+            eventDateTV.setText(e.toString());
 
             // return this view element with the correct data inserted
             return view;
