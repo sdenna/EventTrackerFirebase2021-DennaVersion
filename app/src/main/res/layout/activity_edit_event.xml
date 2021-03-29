@@ -6,36 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".EditEventActivity"
     android:orientation="vertical">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update/Delete an Event"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:textSize="30sp"
-        android:gravity="center"
-        />
-
+    
 
     <EditText
         android:id="@+id/eventName"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="20dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
         android:hint="Name of event to edit"
         />
 
-
-    <EditText
-        android:id="@+id/eventDate"
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="20dp"
-        android:layout_height="40dp"
-        android:hint="Date of event to edit"
+    <CalendarView
+        android:id="@+id/eventCalendarDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         />
-
 
     <Button
         android:id="@+id/editButton"

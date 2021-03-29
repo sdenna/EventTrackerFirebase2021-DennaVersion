@@ -2,21 +2,23 @@ package com.example.eventtrackerfirebase2021;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,8 +27,12 @@ public class EditEventActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     public static final String TAG = "EditEventActivity";
     private EditText eventNameET;
-    private EditText eventDateET;
+    private CalendarView calendarView;
     private String keyToUpdate;
+    private String dateSelected = "No date chosen";
+    private int dateMonth;
+    private int dateDay;
+    private int dateYear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,58 +48,53 @@ public class EditEventActivity extends AppCompatActivity {
         keyToUpdate = event.getKey();
 
         eventNameET = (EditText)findViewById(R.id.eventName);
-        eventDateET = (EditText)findViewById(R.id.eventDate);
+        calendarView = (CalendarView) findViewById(R.id.eventCalendarDate);
 
         eventNameET.setText(eventNameToUpdate);
-        eventDateET.setText(eventDateToUpdate);
+
+        // This allows us to parse out the date to get teh month, day year
+        String parts[] = eventDateToUpdate.split("/");
+
+        int month = Integer.parseInt(parts[0]);
+        int day = Integer.parseInt(parts[1]);
+        int year = Integer.parseInt(parts[2]);
+
+        // Sets the month day, year on the calendar view so we can display the date
+        // they chose and avoid having to error check their entry when they enter a new
+        // date
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+
+        long milliTime = calendar.getTimeInMillis();
+        calendarView.setDate(milliTime);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener(){
+            @Override
+            public void onSelectedDayChange(CalendarView calendarView, int year, int month, int day) {
+                dateSelected =  (month + 1) + "/" + day + "/" + year;
+                dateYear = year;
+                dateMonth = month + 1;
+                dateDay = day;
+                closeKeyboard();
+            }
+        });
     }
 
     public void updateEventData(View v) {
         String newName = eventNameET.getText().toString();
-        String newDate = eventDateET.getText().toString();
-        int month = -1;
-        int day = -1;
-        int year = -1;
-
-        // error checking to ensure date is of the form 01/17/1979 etc.
-        if (newDate.length() != 10) {
-            toastMessage("Please enter date as MM/DD/YYYY");
-            return;
-        }
-        else if (newName.length() == 0) {
-            toastMessage("Please enter a name for the event");
-            return;
-        }
-        else
-        {
-            // prevents the app from crashing if user doesn't use correct date format
-            // and it wasn't caught in previous check since that only checked length
-            // of the string
-            try{
-                month = Integer.parseInt(newDate.substring(0, 2));
-                day =  Integer.parseInt(newDate.substring(3, 5));
-                year =  Integer.parseInt(newDate.substring(6));
-            }
-            catch (Exception e) {
-                toastMessage("Please enter date as MM/DD/YYYY");
-                return;
-            }
-        }
-
-        if (!(month > 0 && month < 13 && day > 0 && day < 32 )) {
-            toastMessage("Please enter a valid month/day");
-            // note this doesn't make sure they don't enter an invalid
-            // date such as Feb 31st...
-            return;
-        }
 
         Map<String, Object> eventToAdd = new HashMap<String, Object>();
         // Adds the all the key-value pairs to this object
         eventToAdd.put(MainActivity.NAME_KEY, newName);
-        eventToAdd.put(MainActivity.DATE_KEY, newDate);
-        eventToAdd.put(MainActivity.MONTH_KEY, month);
-        eventToAdd.put(MainActivity.DAY_KEY, day);
-        eventToAdd.put(MainActivity.YEAR_KEY,year);
+        eventToAdd.put(MainActivity.DATE_KEY, dateSelected);
+        eventToAdd.put(MainActivity.MONTH_KEY, dateMonth);
+        eventToAdd.put(MainActivity.DAY_KEY, dateDay);
+        eventToAdd.put(MainActivity.YEAR_KEY,dateYear);
 
         db.collection("events").document(keyToUpdate)
                 .update(eventToAdd);
@@ -103,6 +104,7 @@ public class EditEventActivity extends AppCompatActivity {
 
     public void deleteEventData(View v) {
         db.collection("events").document(keyToUpdate).delete();
+        this.finish();
         onHome(v);              // reloads opening screen
     }
 
@@ -155,5 +157,13 @@ public class EditEventActivity extends AppCompatActivity {
     */
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();     // view will refer to the keyboard
+        if (view != null ){                     // if there is a view that has focus
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
